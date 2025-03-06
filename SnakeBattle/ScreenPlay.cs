@@ -11,8 +11,7 @@ namespace SnakeBattle
 
         Vector2 _mouse;
 
-        static public int CellW = 40;
-        static public int CellH = 40;
+        static public Vector2 Cell = new Vector2(32,32);
 
         Hero _hero;
 
@@ -44,7 +43,7 @@ namespace SnakeBattle
             if (indexLayer == (int)Game1.Layers.Main)
             {
                 batch.GraphicsDevice.Clear(Color.DarkSlateBlue * .5f);
-                batch.Grid(Vector2.Zero, Game1.ScreenW, Game1.ScreenH, CellW, CellH, Color.Black * .6f);
+                batch.Grid(Vector2.Zero, Game1.ScreenW, Game1.ScreenH, Cell.X, Cell.Y, Color.Black * .6f);
 
             }
 
