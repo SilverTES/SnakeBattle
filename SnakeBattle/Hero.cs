@@ -51,6 +51,7 @@ namespace SnakeBattle
             if (!_arena.IsInArena(_bodys[0]._mapPosition + direction))
                 return;
 
+
             var cell = _arena.GetGrid(_bodys[0]._mapPosition + direction);
 
             if (cell == null)
@@ -68,7 +69,7 @@ namespace SnakeBattle
                     new FxExplose(_arena.AbsXY + (_bodys[0]._mapPosition + direction).ToVector2() * _arena.CellSize + _arena.CellSize/2, item._color, 16, 40).AppendTo(_parent);
 
                     cell._owner.KillMe();
-                    cell._owner = null;
+                    //cell._owner = null;
 
 
                     _arena.SetGrid(_bodys[0]._mapPosition + direction, Const.NoIndex, null);

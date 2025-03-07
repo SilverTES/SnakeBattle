@@ -58,16 +58,27 @@ namespace SnakeBattle
             InitGrid();
 
         }
-        public void AddRandomItem()
+        public void AddRandomItem(int nbItems)
         {
-            int x = Misc.Rng.Next(0, MapSize.X);
-            int y = Misc.Rng.Next(0, MapSize.Y);
+            for (int i = 0; i < nbItems; i++)
+            {
+                bool canSpawn = false;
+                while(!canSpawn)
+                {
+                    int x = Misc.Rng.Next(0, MapSize.X);
+                    int y = Misc.Rng.Next(0, MapSize.Y);
 
-            Point pos = new Point(x, y);
+                    Point pos = new Point(x, y);
 
-            Color color = Colors[Misc.Rng.Next(0, Colors.Length - 1)];
+                    if (GetGrid(pos)._type != Const.NoIndex)
+                        continue;
 
-            new Item(this, pos, color).AppendTo(this);
+                    Color color = Colors[Misc.Rng.Next(0, Colors.Length - 1)];
+
+                    new Item(this, pos, color).AppendTo(this);
+                    canSpawn = true;
+                }
+            }
         }
         public void ClearGrid(int type = Const.NoIndex, Node owner = null)
         {
@@ -175,7 +186,7 @@ namespace SnakeBattle
                                 continue;
 
                             Vector2 pos = Vector2.UnitX * i * CellSize.X + Vector2.UnitY * j * CellSize.Y;
-                            batch.CenterStringXY(Game1._fontMain, $"{_grid.Get(i,j)._type}", pos + AbsXY + CellSize / 2, Color.Gray * .5f);
+                            batch.CenterStringXY(Game1._fontMain, $"{_grid.Get(i,j)._type}", pos + AbsXY + CellSize / 2, Color.White * .8f);
 
                         }
                     }

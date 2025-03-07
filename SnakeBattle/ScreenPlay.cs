@@ -40,7 +40,7 @@ namespace SnakeBattle
             _loop.SetLoop(0f, 0f, 2f, .05f, Mugen.Animation.Loops.PINGPONG);
             _loop.Start();
 
-            _hero = (Hero)new Hero(_arena, new Point(_arena.MapSize.X / 2, _arena.MapSize.Y / 2), 1).AppendTo(_arena);
+            _hero = (Hero)new Hero(_arena, new Point(_arena.MapSize.X / 2, _arena.MapSize.Y / 2), 5).AppendTo(_arena);
 
             Init();
         }
@@ -49,10 +49,7 @@ namespace SnakeBattle
             _arena.KillAll(UID.Get<Item>());
             _arena.ClearGrid();
 
-            for (int i = 0; i < 10; i++)
-            {
-                _arena.AddRandomItem();
-            }
+            _arena.AddRandomItem(4);
 
             _hero.DeleteBody();
             _hero.SetMapPosition(new Point(_arena.MapSize.X / 2, _arena.MapSize.Y / 2));
@@ -74,6 +71,9 @@ namespace SnakeBattle
                 Init();
             }
 
+
+            if (_arena.GroupOf(UID.Get<Item>()).Count <= 0)
+                _arena.AddRandomItem(4);
 
             UpdateChilds(gameTime);
 

@@ -16,8 +16,9 @@ namespace SnakeBattle
 
         public Point _mapPrevPosition;
         public Point _mapPosition;
+        public Point _mapNextPosition;
         
-        public Point _direction;
+        //public Point _direction;
         //public Point _nextDirection;
 
         public bool _isMoveTo = false;
@@ -55,7 +56,7 @@ namespace SnakeBattle
         }
         public void SetDirection(Point direction)
         {
-            _direction = direction;
+            //_direction = direction;
 
             MoveTo(_mapPosition + direction);
         }
@@ -80,6 +81,12 @@ namespace SnakeBattle
 
             _goal.X = mapPosition.X * _arena.CellSize.X;
             _goal.Y = mapPosition.Y * _arena.CellSize.Y;
+
+            _mapNextPosition.X = mapPosition.X;
+            _mapNextPosition.Y = mapPosition.Y;
+
+            _arena.SetGrid(_mapPosition, Const.NoIndex, null);
+            
         }
 
         public override Node Update(GameTime gameTime)
@@ -87,9 +94,6 @@ namespace SnakeBattle
             UpdateRect();
 
             _isACorner = false;
-
-            _mapPosition.X = (int)Math.Round(_x / _arena.CellSize.X);
-            _mapPosition.Y = (int)Math.Round(_y / _arena.CellSize.Y);
 
             if (_isMoveTo)
             {
@@ -101,7 +105,7 @@ namespace SnakeBattle
                 {
                     _isMoveTo = false;
 
-                    _arena.SetGrid(_mapPrevPosition, Const.NoIndex, null);
+                    _mapPosition = _mapNextPosition;
                     _arena.SetGrid(_mapPosition, UID.Get<Hero>(), this);
                 }
             }
@@ -128,7 +132,7 @@ namespace SnakeBattle
         {
             var rect = new RectangleF(AbsX, AbsY, _arena.CellSize.X, _arena.CellSize.Y);
             //batch.FillRectangle(rect.Extend(-4), _isACorner ? Color.Red : Color.Orange);
-            //batch.FillRectangle(rect.Extend(-6), Color.Orange);
+            batch.FillRectangle(rect.Extend(-6), Color.Orange);
 
             batch.Rectangle(rect.Extend(-6), Color.Yellow, 2f);
             batch.Rectangle(rect.Extend(-2), Color.LightGoldenrodYellow, 2f);
