@@ -23,6 +23,7 @@ namespace SnakeBattle
 
         ArenaSet[] _arenaSets = [
             new ArenaSet(32,32,32,32),
+            new ArenaSet(20,20,50,50),
             new ArenaSet(16,16,64,64),
             ];
 
@@ -33,7 +34,7 @@ namespace SnakeBattle
             SetPosition(0, 0);
             SetSize(Game1.ScreenW, Game1.ScreenH);
 
-            _arena = (Arena)new Arena(_arenaSets[0]).AppendTo(this);
+            _arena = (Arena)new Arena(_arenaSets[1]).AppendTo(this);
             _arena.SetPosition(440, 20);
 
             _loop = new Addon.Loop(this);

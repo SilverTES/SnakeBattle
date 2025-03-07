@@ -151,7 +151,6 @@ namespace SnakeBattle
 
         public override Node Update(GameTime gameTime)
         {
-            
 
             UpdateChilds(gameTime);
 

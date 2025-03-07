@@ -17,16 +17,13 @@ namespace SnakeBattle
         public Point _mapPrevPosition;
         public Point _mapPosition;
         public Point _mapNextPosition;
-        
-        //public Point _direction;
-        //public Point _nextDirection;
 
-        public bool _isMoveTo = false;
+        public bool _isMove = false;
 
         public Vector2 _from;
         public Vector2 _goal;
         public float _ticMove = 0;
-        public float _tempoMove = 10;
+        public float _tempoMove = 12;
 
 
         public bool _isACorner = false;
@@ -54,26 +51,13 @@ namespace SnakeBattle
 
             UpdateRect();
         }
-        public void SetDirection(Point direction)
-        {
-            //_direction = direction;
-
-            MoveTo(_mapPosition + direction);
-        }
-        //public void SetNextDirection(int dx, int dy)
-        //{
-        //    _nextDirection.X = dx;
-        //    _nextDirection.Y = dy;
-
-        //    //MoveTo(_mapPosition.X + dx, _mapPosition.Y + dy);
-        //}
         public void MoveTo(Point mapPosition)
         {
             _mapPrevPosition.X = _mapPosition.X;
             _mapPrevPosition.Y = _mapPosition.Y;
 
             _ticMove = 0;
-            _isMoveTo = true;
+            _isMove = true;
 
 
             _from.X = _x;
@@ -86,7 +70,6 @@ namespace SnakeBattle
             _mapNextPosition.Y = mapPosition.Y;
 
             _arena.SetGrid(_mapPosition, Const.NoIndex, null);
-            
         }
 
         public override Node Update(GameTime gameTime)
@@ -95,15 +78,18 @@ namespace SnakeBattle
 
             _isACorner = false;
 
-            if (_isMoveTo)
+            if (_isMove)
             {
                 _x = Easing.GetValue(Easing.Linear, _ticMove, _from.X, _goal.X, _tempoMove);
                 _y = Easing.GetValue(Easing.Linear, _ticMove, _from.Y, _goal.Y, _tempoMove);
 
-                _ticMove++;
+                //_x = MathHelper.LerpPrecise(_from.X, _goal.X, _ticMove);
+                //_y = MathHelper.LerpPrecise(_from.Y, _goal.Y, _ticMove);
+
+                _ticMove += 1f;
                 if (_ticMove > _tempoMove)
                 {
-                    _isMoveTo = false;
+                    _isMove = false;
 
                     _mapPosition = _mapNextPosition;
                     _arena.SetGrid(_mapPosition, UID.Get<Hero>(), this);
@@ -119,8 +105,8 @@ namespace SnakeBattle
             //batch.FillRectangle(rect.Extend(-4), _isACorner ? Color.Red : Color.Orange);
             //batch.FillRectangle(rect.Extend(-6), Color.Orange);
 
-            batch.Rectangle(rect.Extend(-6), _color, 3f);
-            batch.Rectangle(rect.Extend(-2), _color * .75f, 2f);
+            batch.Rectangle(rect.Extend(-8), _color, 3f);
+            batch.Rectangle(rect.Extend(-4), _color * .75f, 2f);
 
             //batch.CenterStringXY(Game1._fontMain, $"{_index}", _position + _arena.CellSize / 2 + _arena.XY, Color.White);
 
@@ -132,10 +118,10 @@ namespace SnakeBattle
         {
             var rect = new RectangleF(AbsX, AbsY, _arena.CellSize.X, _arena.CellSize.Y);
             //batch.FillRectangle(rect.Extend(-4), _isACorner ? Color.Red : Color.Orange);
-            batch.FillRectangle(rect.Extend(-6), Color.Orange);
+            batch.FillRectangle(rect.Extend(-10), Color.Orange);
 
-            batch.Rectangle(rect.Extend(-6), Color.Yellow, 2f);
-            batch.Rectangle(rect.Extend(-2), Color.LightGoldenrodYellow, 2f);
+            batch.Rectangle(rect.Extend(-8), Color.Yellow, 2f);
+            batch.Rectangle(rect.Extend(-4), Color.LightGoldenrodYellow, 2f);
 
             //batch.CenterStringXY(Game1._fontMain, $"{_index}", _position + _arena.CellSize / 2 + _arena.XY, Color.White);
 

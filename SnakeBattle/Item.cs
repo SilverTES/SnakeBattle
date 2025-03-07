@@ -46,8 +46,11 @@ namespace SnakeBattle
         {
             var rect = new RectangleF(AbsX, AbsY, _arena.CellSize.X, _arena.CellSize.Y);
 
-            batch.Rectangle(rect.Extend(-6), _color, 2f);
+            //batch.Rectangle(rect.Extend(-6), _color, 2f);
             //batch.Rectangle(rect.Extend(-2), Color.DarkGreen, 2f);
+
+            batch.Circle(AbsXY + _arena.CellSize / 2, _arena.CellSize.X / 2 - 8, 8, _color, 2f);
+            batch.Circle(AbsXY + _arena.CellSize / 2, _arena.CellSize.X / 2 - 4, 8, _color, 2f);
 
             //batch.CenterStringXY(Game1._fontMain, $"{_index}", AbsXY + _arena.CellSize / 2, Color.White);
 

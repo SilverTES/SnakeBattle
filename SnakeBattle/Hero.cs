@@ -19,6 +19,8 @@ namespace SnakeBattle
 
         List<Body> _bodys = [];
 
+        public Point _directionHead;
+
         Arena _arena;
         public Hero(Arena arena, Point mapPosition, int size = 4)
         {
@@ -47,12 +49,13 @@ namespace SnakeBattle
         }
         public void SetDirection(Point direction)
         {
+            Point nextPosition = _bodys[0]._mapPosition + direction;
             // check if position + direction is in Arena
-            if (!_arena.IsInArena(_bodys[0]._mapPosition + direction))
+            if (!_arena.IsInArena(nextPosition))
                 return;
 
 
-            var cell = _arena.GetGrid(_bodys[0]._mapPosition + direction);
+            var cell = _arena.GetGrid(nextPosition);
 
             if (cell == null)
                 return;
@@ -66,13 +69,11 @@ namespace SnakeBattle
                     
                     AddBody(new Body(_arena, item._color), LastBody()._mapPosition);
                     
-                    new FxExplose(_arena.AbsXY + (_bodys[0]._mapPosition + direction).ToVector2() * _arena.CellSize + _arena.CellSize/2, item._color, 16, 40).AppendTo(_parent);
+                    new FxExplose(_arena.AbsXY + nextPosition.ToVector2() * _arena.CellSize + _arena.CellSize/2, item._color, 16, 40).AppendTo(_parent);
 
                     cell._owner.KillMe();
-                    //cell._owner = null;
 
-
-                    _arena.SetGrid(_bodys[0]._mapPosition + direction, Const.NoIndex, null);
+                    _arena.SetGrid(nextPosition, Const.NoIndex, null);
                 }
                 return;
             }
@@ -80,12 +81,15 @@ namespace SnakeBattle
             if (cell._type != Const.NoIndex)
                 return;
 
-            _bodys[0].SetDirection(direction);
+            _bodys[0].MoveTo(nextPosition);
+
+            _directionHead = direction;
 
             for (int i = 1; i < _bodys.Count; i++)
             {
                 _bodys[i].MoveTo(_bodys[i-1]._mapPrevPosition);
             }
+
         }
         public void AddBody(Body body, Point mapPosition)
         {
@@ -116,6 +120,7 @@ namespace SnakeBattle
         {
             UpdateRect();
 
+
             for (int i = 0; i < _bodys.Count; i++)
             {
                 _bodys[i].Update(gameTime);
@@ -138,17 +143,24 @@ namespace SnakeBattle
             _stickLeft = _pad.ThumbSticks.Left;
             _stickRight = _pad.ThumbSticks.Right;
 
-            if (!_bodys[0]._isMoveTo)
+            if (!_bodys[0]._isMove)
             {
-                if (_pad.DPad.Up == ButtonState.Pressed || _key.IsKeyDown(Keys.Z) || _key.IsKeyDown(Keys.Up) || _stickLeft.Y > 0) SetDirection(new Point(0,-1));
-                if (_pad.DPad.Down == ButtonState.Pressed || _key.IsKeyDown(Keys.S) || _key.IsKeyDown(Keys.Down) || _stickLeft.Y < 0) SetDirection(new Point(0, 1));
+                Point direction = new Point();
 
-                if (_pad.DPad.Left == ButtonState.Pressed || _key.IsKeyDown(Keys.Q) || _key.IsKeyDown(Keys.Left) || _stickLeft.X < 0) SetDirection(new Point(- 1, 0));
-                if (_pad.DPad.Right == ButtonState.Pressed || _key.IsKeyDown(Keys.D) || _key.IsKeyDown(Keys.Right) || _stickLeft.X > 0) SetDirection(new Point(1, 0));
+                if (_pad.DPad.Up == ButtonState.Pressed || _key.IsKeyDown(Keys.Z) || _key.IsKeyDown(Keys.Up) || _stickLeft.Y > 0) direction += new Point(0, -1);
+                if (_pad.DPad.Down == ButtonState.Pressed || _key.IsKeyDown(Keys.S) || _key.IsKeyDown(Keys.Down) || _stickLeft.Y < 0) direction += new Point(0, 1);
+
+                if (_pad.DPad.Left == ButtonState.Pressed || _key.IsKeyDown(Keys.Q) || _key.IsKeyDown(Keys.Left) || _stickLeft.X < 0)  direction += new Point(-1, 0);
+                if (_pad.DPad.Right == ButtonState.Pressed || _key.IsKeyDown(Keys.D) || _key.IsKeyDown(Keys.Right) || _stickLeft.X > 0) direction += new Point(1, 0);
+
+                // Result of 4 directions
+                if (direction.X != 0 ^ direction.Y != 0)
+                {
+                    SetDirection(direction);
+                }
 
                 // Continue until touch wall
-                //if (_bodys[0]._direction.X != 0 || _bodys[0]._direction.Y != 0) SetDirection(_bodys[0]._direction.X, _bodys[0]._direction.Y);
-
+                //if (_directionHead.X != 0 || _directionHead.Y != 0) SetDirection(_directionHead);
             }
 
             return base.Update(gameTime);
