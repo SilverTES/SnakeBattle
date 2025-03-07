@@ -19,7 +19,7 @@ namespace SnakeBattle
         {
             _game = game;
 
-            _arena = (Arena)new Arena(32,32).AppendTo(this);
+            _arena = (Arena)new Arena(32,32,32,32).AppendTo(this);
             
             _arena.SetPosition(440, 20);
 

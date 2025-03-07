@@ -37,6 +37,15 @@ namespace SnakeBattle
 
             _arena = arena;
         }
+        public bool IsInArena(int mapX, int mapY)
+        {
+            if (mapX < 0 || mapX >= _arena.MapSize.X ||
+                mapY < 0 || mapY >= _arena.MapSize.Y)
+                return false;
+            else
+                return true;
+        }
+
         public void SetMapPosition(int mapX, int mapY)
         {
             for (int i = 0; i < _cells.Count; i++)
@@ -47,6 +56,10 @@ namespace SnakeBattle
 
         public void SetDirection(int dx, int dy)
         {
+            // check if position + direction is in Arena
+            if (!IsInArena(_cells[0]._mapPosition.X + dx, _cells[0]._mapPosition.Y + dy))
+                return;
+
             _cells[0].SetDirection(dx, dy);
 
             for (int i = 1; i < _cells.Count; i++)
@@ -54,10 +67,10 @@ namespace SnakeBattle
                 _cells[i].MoveTo(_cells[i-1]._mapPrevPosition.X, _cells[i-1]._mapPrevPosition.Y);
             }
         }
-        public void SetNextDirection(int dx, int dy)
-        {
-            _cells[0].SetNextDirection(dx, dy);
-        }
+        //public void SetNextDirection(int dx, int dy)
+        //{
+        //    _cells[0].SetNextDirection(dx, dy);
+        //}
 
         public override Node Init()
         {
@@ -102,20 +115,20 @@ namespace SnakeBattle
                 //if (_direction.X != 0 || _direction.Y != 0)
                 //    SetDirection(_direction.X, _direction.Y);
             }
-            else
-            {
-                if (_pad.DPad.Up == ButtonState.Pressed || _key.IsKeyDown(Keys.Up) || _stickLeft.Y > 0) SetNextDirection(0, -1);
-                if (_pad.DPad.Down == ButtonState.Pressed || _key.IsKeyDown(Keys.Down) || _stickLeft.Y < 0) SetNextDirection(0, 1);
+            //else
+            //{
+            //    if (_pad.DPad.Up == ButtonState.Pressed || _key.IsKeyDown(Keys.Up) || _stickLeft.Y > 0) SetNextDirection(0, -1);
+            //    if (_pad.DPad.Down == ButtonState.Pressed || _key.IsKeyDown(Keys.Down) || _stickLeft.Y < 0) SetNextDirection(0, 1);
 
-                if (_pad.DPad.Left == ButtonState.Pressed || _key.IsKeyDown(Keys.Left) || _stickLeft.X < 0) SetNextDirection(-1, 0);
-                if (_pad.DPad.Right == ButtonState.Pressed || _key.IsKeyDown(Keys.Right) || _stickLeft.X > 0) SetNextDirection(1, 0);
+            //    if (_pad.DPad.Left == ButtonState.Pressed || _key.IsKeyDown(Keys.Left) || _stickLeft.X < 0) SetNextDirection(-1, 0);
+            //    if (_pad.DPad.Right == ButtonState.Pressed || _key.IsKeyDown(Keys.Right) || _stickLeft.X > 0) SetNextDirection(1, 0);
 
-                // Auto Next Direction if different than current direction
-                if (_cells[0]._nextDirection.X != _cells[0]._direction.X || _cells[0]._nextDirection.Y != _cells[0]._direction.Y)
-                {
-                    //SetDirection(_cells[0]._nextDirection.X, _cells[0]._nextDirection.Y);
-                }
-            }
+            //    // Auto Next Direction if different than current direction
+            //    if (_cells[0]._nextDirection.X != _cells[0]._direction.X || _cells[0]._nextDirection.Y != _cells[0]._direction.Y)
+            //    {
+            //        //SetDirection(_cells[0]._nextDirection.X, _cells[0]._nextDirection.Y);
+            //    }
+            //}
 
                 return base.Update(gameTime);
         }

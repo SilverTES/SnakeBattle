@@ -17,7 +17,7 @@ namespace SnakeBattle
         public Point _mapPosition;
         
         public Point _direction;
-        public Point _nextDirection;
+        //public Point _nextDirection;
 
         public bool _isMoveTo = false;
 
@@ -53,13 +53,13 @@ namespace SnakeBattle
 
             MoveTo(_mapPosition.X + dx, _mapPosition.Y + dy);
         }
-        public void SetNextDirection(int dx, int dy)
-        {
-            _nextDirection.X = dx;
-            _nextDirection.Y = dy;
+        //public void SetNextDirection(int dx, int dy)
+        //{
+        //    _nextDirection.X = dx;
+        //    _nextDirection.Y = dy;
 
-            //MoveTo(_mapPosition.X + dx, _mapPosition.Y + dy);
-        }
+        //    //MoveTo(_mapPosition.X + dx, _mapPosition.Y + dy);
+        //}
         public void MoveTo(int mapX, int mapY)
         {
             _mapPrevPosition.X = _mapPosition.X;

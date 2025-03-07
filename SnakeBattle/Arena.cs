@@ -13,7 +13,7 @@ namespace SnakeBattle
 {
     class Arena : Node
     {
-
+        public Point MapSize => _mapSize;
         static public Vector2 Cell = new Vector2(32, 32);
         Point _mapSize = new Point(20,20);
 
@@ -24,9 +24,9 @@ namespace SnakeBattle
         public Arena(int mapW, int mapH, int cellW = 32, int cellH = 32)
         {
             _hero = (Hero)new Hero(this).AppendTo(this);
-            _hero.SetMapPosition(10, 10);
+            _hero.SetMapPosition(2, 2);
 
-            SetMapSize(mapW, mapH);
+            SetMapSize(mapW, mapH, cellW, cellH);
 
 
 
