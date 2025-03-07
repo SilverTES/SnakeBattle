@@ -24,7 +24,7 @@ namespace SnakeBattle
         public Vector2 _from;
         public Vector2 _goal;
         public float _ticMove = 0;
-        public float _tempoMove = 5;
+        public float _tempoMove = 4;
 
 
         public bool _isACorner = false;
@@ -94,9 +94,9 @@ namespace SnakeBattle
         {
             var rect = new RectangleF(_position.X, _position.Y, ScreenPlay.Cell.X, ScreenPlay.Cell.Y);
             //batch.FillRectangle(rect.Extend(-4), _isACorner ? Color.Black : Color.Orange);
-            batch.FillRectangle(rect.Extend(-6), Color.Orange);
+            //batch.FillRectangle(rect.Extend(-6), Color.Orange);
 
-            batch.Rectangle(rect.Extend(-4), Color.Red, 2f);
+            batch.Rectangle(rect.Extend(-6), Color.Red, 2f);
             batch.Rectangle(rect.Extend(-2), Color.DarkRed, 2f);
 
             batch.CenterStringXY(Game1._fontMain, $"{_index}", _position + ScreenPlay.Cell / 2, Color.White);

@@ -26,7 +26,7 @@ namespace SnakeBattle
             SetSize(ScreenPlay.Cell.X, ScreenPlay.Cell.Y);
             SetPivot(Position.CENTER);
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 6; i++)
             {
                 var cell = new Cell();
                 _cells.Add(cell);
@@ -109,7 +109,7 @@ namespace SnakeBattle
                 // Auto Next Direction if different than current direction
                 if (_cells[0]._nextDirection.X != _cells[0]._direction.X || _cells[0]._nextDirection.Y != _cells[0]._direction.Y)
                 {
-                    SetDirection(_cells[0]._nextDirection.X, _cells[0]._nextDirection.Y);
+                    //SetDirection(_cells[0]._nextDirection.X, _cells[0]._nextDirection.Y);
                 }
             }
 
@@ -125,7 +125,12 @@ namespace SnakeBattle
 
                 //batch.Rectangle(rect.Extend(-4), Color.Red, 1f);
                 //batch.Rectangle(rect.Extend(-2), Color.DarkRed, 1f);
-                for (int i = 0; i < _cells.Count; i++)
+                //for (int i = 0; i < _cells.Count; i++)
+                //{
+                //    _cells[i].Draw(batch);
+                //}
+
+                for (int i = _cells.Count -1; i >= 0; i--)
                 {
                     _cells[i].Draw(batch);
                 }
