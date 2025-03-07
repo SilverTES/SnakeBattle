@@ -45,7 +45,6 @@ namespace SnakeBattle
                 _bodys[i].SetMapPosition(mapPosition);
             }
         }
-
         public void SetDirection(Point direction)
         {
             // check if position + direction is in Arena
@@ -66,8 +65,11 @@ namespace SnakeBattle
                     
                     AddBody(new Body(_arena, item._color), LastBody()._mapPosition);
                     
+                    new FxExplose(_arena.AbsXY + (_bodys[0]._mapPosition + direction).ToVector2() * _arena.CellSize + _arena.CellSize/2, item._color, 16, 40).AppendTo(_parent);
+
                     cell._owner.KillMe();
                     cell._owner = null;
+
 
                     _arena.SetGrid(_bodys[0]._mapPosition + direction, Const.NoIndex, null);
                 }
@@ -94,13 +96,10 @@ namespace SnakeBattle
         {
             return _bodys.Last();
         }
-
         public override Node Init()
         {
             return base.Init();
         }
-
-
         public override Node Update(GameTime gameTime)
         {
             UpdateRect();

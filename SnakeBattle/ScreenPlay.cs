@@ -40,7 +40,7 @@ namespace SnakeBattle
             _loop.SetLoop(0f, 0f, 2f, .05f, Mugen.Animation.Loops.PINGPONG);
             _loop.Start();
 
-            _hero = (Hero)new Hero(_arena, new Point(_arena.MapSize.X / 2, _arena.MapSize.Y / 2), 4).AppendTo(_arena);
+            _hero = (Hero)new Hero(_arena, new Point(_arena.MapSize.X / 2, _arena.MapSize.Y / 2), 1).AppendTo(_arena);
 
             Init();
         }
