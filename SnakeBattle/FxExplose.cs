@@ -79,7 +79,7 @@ namespace SnakeBattle
         }
         public override Node Draw(SpriteBatch batch, GameTime gameTime, int indexLayer)
         {
-            if (indexLayer == (int)Game1.Layers.Main)
+            if (indexLayer == (int)Game1.Layers.FX)
                 for (int i = 0; i < _numParticles; i++)
                 {
                     _particles[i].Draw(batch, gameTime, indexLayer);

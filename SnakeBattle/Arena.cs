@@ -58,6 +58,17 @@ namespace SnakeBattle
             InitGrid();
 
         }
+        public void AddRandomItem()
+        {
+            int x = Misc.Rng.Next(0, MapSize.X);
+            int y = Misc.Rng.Next(0, MapSize.Y);
+
+            Point pos = new Point(x, y);
+
+            Color color = Colors[Misc.Rng.Next(0, Colors.Length - 1)];
+
+            new Item(this, pos, color).AppendTo(this);
+        }
         public void ClearGrid(int type = Const.NoIndex, Node owner = null)
         {
             for (int i = 0; i < _grid._width; i++)

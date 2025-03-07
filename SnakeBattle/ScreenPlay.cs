@@ -51,14 +51,7 @@ namespace SnakeBattle
 
             for (int i = 0; i < 10; i++)
             {
-                int x = Misc.Rng.Next(0, _arena.MapSize.X);
-                int y = Misc.Rng.Next(0, _arena.MapSize.Y);
-
-                Point pos = new Point(x, y);
-
-                Color color = Arena.Colors[Misc.Rng.Next(0, Arena.Colors.Length - 1)];
-
-                new Item(_arena, pos, color).AppendTo(_arena);
+                _arena.AddRandomItem();
             }
 
             _hero.DeleteBody();
@@ -66,6 +59,7 @@ namespace SnakeBattle
 
             return base.Init();
         }
+
         public override Node Update(GameTime gameTime)
         {
             _key = Keyboard.GetState();
