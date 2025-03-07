@@ -21,17 +21,21 @@ namespace SnakeBattle
 
         List<Cell> _cells = [];
 
-        public Hero()
+        Arena _arena;
+        public Hero(Arena arena)
         {
-            SetSize(ScreenPlay.Cell.X, ScreenPlay.Cell.Y);
+            _arena = arena;
+
+            SetSize(Arena.Cell.X, Arena.Cell.Y);
             SetPivot(Position.CENTER);
 
             for (int i = 0; i < 6; i++)
             {
-                var cell = new Cell();
+                var cell = new Cell(_arena);
                 _cells.Add(cell);
             }
 
+            _arena = arena;
         }
         public void SetMapPosition(int mapX, int mapY)
         {

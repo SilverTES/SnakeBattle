@@ -11,16 +11,25 @@ namespace SnakeBattle
 
         Vector2 _mouse;
 
-        static public Vector2 Cell = new Vector2(32, 32);
+        Arena _arena;
 
-        Hero _hero;
+        Addon.Loop _loop;
 
         public ScreenPlay(Game1 game)
         {
             _game = game;
 
-            _hero = (Hero)new Hero().AppendTo(this);
-            _hero.SetMapPosition(10, 10);
+            _arena = (Arena)new Arena(32,32).AppendTo(this);
+            
+            _arena.SetPosition(440, 20);
+
+            SetPosition(0, 0);
+            SetSize(Game1.ScreenW, Game1.ScreenH);
+
+            _loop = new Addon.Loop(this);
+            _loop.SetLoop(0f, 0f, 2f, .05f, Mugen.Animation.Loops.PINGPONG);
+            _loop.Start();
+
         }
         public override Node Init()
         {
@@ -28,9 +37,9 @@ namespace SnakeBattle
         }
         public override Node Update(GameTime gameTime)
         {
-            _mouse = WindowManager.GetMousePosition();
+            _loop.Update(gameTime);
 
-            
+            _mouse = WindowManager.GetMousePosition();
 
             UpdateChilds(gameTime);
 
@@ -42,10 +51,7 @@ namespace SnakeBattle
 
             if (indexLayer == (int)Game1.Layers.Main)
             {
-                batch.GraphicsDevice.Clear(Color.DarkSlateBlue * .5f);
-                //batch.Grid(Vector2.Zero, Game1.ScreenW, Game1.ScreenH, Cell.X, Cell.Y, Color.Black * 1f, 3f);
-                batch.Grid(Vector2.Zero, Game1.ScreenW, Game1.ScreenH, Cell.X, Cell.Y, Color.Gray * .25f, 1f);
-
+                batch.Draw(Game1._texBG, AbsXY + Vector2.UnitY * _loop._current, Color.White);
             }
 
             if (indexLayer == (int)Game1.Layers.Debug)

@@ -28,6 +28,13 @@ namespace SnakeBattle
 
 
         public bool _isACorner = false;
+
+        Arena _arena;
+
+        public Cell(Arena arena)
+        {
+            _arena = arena;
+        }
         public void SetMapPosition(int mapX, int mapY)
         {
             _mapPosition.X = mapX;
@@ -36,8 +43,8 @@ namespace SnakeBattle
             _mapPrevPosition.X = _mapPosition.X;
             _mapPrevPosition.Y = _mapPosition.Y;
 
-            _position.X = mapX * ScreenPlay.Cell.X;
-            _position.Y = mapY * ScreenPlay.Cell.Y;
+            _position.X = mapX * Arena.Cell.X;
+            _position.Y = mapY * Arena.Cell.Y;
         }
         public void SetDirection(int dx, int dy)
         {
@@ -65,16 +72,16 @@ namespace SnakeBattle
             _from.X = _position.X;
             _from.Y = _position.Y;
 
-            _goal.X = mapX * ScreenPlay.Cell.X;
-            _goal.Y = mapY * ScreenPlay.Cell.Y;
+            _goal.X = mapX * Arena.Cell.X;
+            _goal.Y = mapY * Arena.Cell.Y;
         }
 
         public void Update()
         {
             _isACorner = false;
 
-            _mapPosition.X = (int)Math.Round(_position.X / ScreenPlay.Cell.X);
-            _mapPosition.Y = (int)Math.Round(_position.Y / ScreenPlay.Cell.Y);
+            _mapPosition.X = (int)Math.Round(_position.X / Arena.Cell.X);
+            _mapPosition.Y = (int)Math.Round(_position.Y / Arena.Cell.Y);
 
             if (_isMoveTo)
             {
@@ -92,14 +99,14 @@ namespace SnakeBattle
 
         public void Draw(SpriteBatch batch)
         {
-            var rect = new RectangleF(_position.X, _position.Y, ScreenPlay.Cell.X, ScreenPlay.Cell.Y);
-            //batch.FillRectangle(rect.Extend(-4), _isACorner ? Color.Black : Color.Orange);
+            var rect = new RectangleF(_position.X + _arena._x, _position.Y + _arena._y, Arena.Cell.X, Arena.Cell.Y);
+            batch.FillRectangle(rect.Extend(-4), _isACorner ? Color.Red : Color.Orange);
             //batch.FillRectangle(rect.Extend(-6), Color.Orange);
 
             batch.Rectangle(rect.Extend(-6), Color.Red, 2f);
             batch.Rectangle(rect.Extend(-2), Color.DarkRed, 2f);
 
-            batch.CenterStringXY(Game1._fontMain, $"{_index}", _position + ScreenPlay.Cell / 2, Color.White);
+            batch.CenterStringXY(Game1._fontMain, $"{_index}", _position + Arena.Cell / 2 + _arena.XY, Color.White);
 
             //rect = new RectangleF(_mapPrevPosition.X * ScreenPlay.CellW, _mapPrevPosition.Y * ScreenPlay.CellH, ScreenPlay.CellW, ScreenPlay.CellH);
             //batch.FillRectangle(rect.Extend(-8), Color.IndianRed * .5f);

@@ -22,6 +22,7 @@ public class Game1 : Game
     static public readonly int ScreenH = 1080;
 
     static public SpriteFont _fontMain;
+    static public Texture2D _texBG;
 
     ScreenPlay _screenPlay;
 
@@ -46,6 +47,7 @@ public class Game1 : Game
     protected override void LoadContent()
     {
         _fontMain = Content.Load<SpriteFont>("Fonts/fontMain");
+        _texBG = Content.Load<Texture2D>("Images/background00");
     }
 
     protected override void Update(GameTime gameTime)
