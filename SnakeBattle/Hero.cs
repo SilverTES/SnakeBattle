@@ -1,13 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Mugen.Animation;
 using Mugen.Core;
 using Mugen.GFX;
-using Mugen.Input;
 using Mugen.Physics;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SnakeBattle
 {
@@ -19,58 +17,83 @@ namespace SnakeBattle
         Vector2 _stickLeft;
         Vector2 _stickRight;
 
-        List<Cell> _cells = [];
+        List<Body> _bodys = [];
 
         Arena _arena;
-        public Hero(Arena arena)
+        public Hero(Arena arena, Point mapPosition, int size = 4)
         {
+            _type = UID.Get<Hero>();
+
             _arena = arena;
 
-            SetSize(Arena.Cell.X, Arena.Cell.Y);
+            SetSize(_arena.CellSize.X, _arena.CellSize.Y);
             SetPivot(Position.CENTER);
 
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < size; i++)
             {
-                var cell = new Cell(_arena);
-                _cells.Add(cell);
+                var body = new Body(_arena, Color.Gray);
+
+                AddBody(body, mapPosition);
             }
 
             _arena = arena;
         }
-        public bool IsInArena(int mapX, int mapY)
+        public void SetMapPosition(Point mapPosition)
         {
-            if (mapX < 0 || mapX >= _arena.MapSize.X ||
-                mapY < 0 || mapY >= _arena.MapSize.Y)
-                return false;
-            else
-                return true;
-        }
-
-        public void SetMapPosition(int mapX, int mapY)
-        {
-            for (int i = 0; i < _cells.Count; i++)
+            for (int i = 0; i < _bodys.Count; i++)
             {
-                _cells[i].SetMapPosition(mapX, mapY);
+                _bodys[i].SetMapPosition(mapPosition);
             }
         }
 
-        public void SetDirection(int dx, int dy)
+        public void SetDirection(Point direction)
         {
             // check if position + direction is in Arena
-            if (!IsInArena(_cells[0]._mapPosition.X + dx, _cells[0]._mapPosition.Y + dy))
+            if (!_arena.IsInArena(_bodys[0]._mapPosition + direction))
                 return;
 
-            _cells[0].SetDirection(dx, dy);
+            var cell = _arena.GetGrid(_bodys[0]._mapPosition + direction);
 
-            for (int i = 1; i < _cells.Count; i++)
+            if (cell == null)
+                return;
+
+            // if touch item
+            if (cell._type == UID.Get<Item>())
             {
-                _cells[i].MoveTo(_cells[i-1]._mapPrevPosition.X, _cells[i-1]._mapPrevPosition.Y);
+                if (cell._owner != null)
+                {
+                    var item = (Item)cell._owner;
+                    
+                    AddBody(new Body(_arena, item._color), LastBody()._mapPosition);
+                    
+                    cell._owner.KillMe();
+                    cell._owner = null;
+
+                    _arena.SetGrid(_bodys[0]._mapPosition + direction, Const.NoIndex, null);
+                }
+                return;
+            }
+
+            if (cell._type != Const.NoIndex)
+                return;
+
+            _bodys[0].SetDirection(direction);
+
+            for (int i = 1; i < _bodys.Count; i++)
+            {
+                _bodys[i].MoveTo(_bodys[i-1]._mapPrevPosition);
             }
         }
-        //public void SetNextDirection(int dx, int dy)
-        //{
-        //    _cells[0].SetNextDirection(dx, dy);
-        //}
+        public void AddBody(Body body, Point mapPosition)
+        {
+            _bodys.Add(body);
+            body.AppendTo(_arena);
+            body.SetMapPosition(mapPosition);
+        }
+        public Body LastBody()
+        {
+            return _bodys.Last();
+        }
 
         public override Node Init()
         {
@@ -82,18 +105,18 @@ namespace SnakeBattle
         {
             UpdateRect();
 
-            for (int i = 0; i < _cells.Count; i++)
+            for (int i = 0; i < _bodys.Count; i++)
             {
-                _cells[i].Update();
-                _cells[i]._index = i;
+                _bodys[i].Update(gameTime);
+                _bodys[i]._numOrder = i;
 
                 // Check if before and after are not aligne = Corner
-                if (i>0 && i< _cells.Count - 1)
+                if (i > 0 && i < _bodys.Count - 1)
                 {
-                    if ((_cells[i - 1]._mapPosition.X != _cells[i + 1]._mapPosition.X) &&
-                        (_cells[i - 1]._mapPosition.Y != _cells[i + 1]._mapPosition.Y))
+                    if ((_bodys[i - 1]._mapPosition.X != _bodys[i + 1]._mapPosition.X) &&
+                        (_bodys[i - 1]._mapPosition.Y != _bodys[i + 1]._mapPosition.Y))
                     {
-                        _cells[i]._isACorner = true;
+                        _bodys[i]._isACorner = true;
                     }
                 }
             }
@@ -104,55 +127,37 @@ namespace SnakeBattle
             _stickLeft = _pad.ThumbSticks.Left;
             _stickRight = _pad.ThumbSticks.Right;
 
-            if (!_cells[0]._isMoveTo)
+            if (!_bodys[0]._isMoveTo)
             {
-                if (_pad.DPad.Up == ButtonState.Pressed || _key.IsKeyDown(Keys.Up) || _stickLeft.Y > 0) SetDirection(0,-1);
-                if (_pad.DPad.Down == ButtonState.Pressed || _key.IsKeyDown(Keys.Down) || _stickLeft.Y < 0) SetDirection(0, 1);
+                if (_pad.DPad.Up == ButtonState.Pressed || _key.IsKeyDown(Keys.Z) || _key.IsKeyDown(Keys.Up) || _stickLeft.Y > 0) SetDirection(new Point(0,-1));
+                if (_pad.DPad.Down == ButtonState.Pressed || _key.IsKeyDown(Keys.S) || _key.IsKeyDown(Keys.Down) || _stickLeft.Y < 0) SetDirection(new Point(0, 1));
 
-                if (_pad.DPad.Left == ButtonState.Pressed || _key.IsKeyDown(Keys.Left) || _stickLeft.X < 0) SetDirection(-1, 0);
-                if (_pad.DPad.Right == ButtonState.Pressed || _key.IsKeyDown(Keys.Right) || _stickLeft.X > 0) SetDirection(1, 0);
+                if (_pad.DPad.Left == ButtonState.Pressed || _key.IsKeyDown(Keys.Q) || _key.IsKeyDown(Keys.Left) || _stickLeft.X < 0) SetDirection(new Point(- 1, 0));
+                if (_pad.DPad.Right == ButtonState.Pressed || _key.IsKeyDown(Keys.D) || _key.IsKeyDown(Keys.Right) || _stickLeft.X > 0) SetDirection(new Point(1, 0));
 
-                //if (_direction.X != 0 || _direction.Y != 0)
-                //    SetDirection(_direction.X, _direction.Y);
+                // Continue until touch wall
+                //if (_bodys[0]._direction.X != 0 || _bodys[0]._direction.Y != 0) SetDirection(_bodys[0]._direction.X, _bodys[0]._direction.Y);
+
             }
-            //else
-            //{
-            //    if (_pad.DPad.Up == ButtonState.Pressed || _key.IsKeyDown(Keys.Up) || _stickLeft.Y > 0) SetNextDirection(0, -1);
-            //    if (_pad.DPad.Down == ButtonState.Pressed || _key.IsKeyDown(Keys.Down) || _stickLeft.Y < 0) SetNextDirection(0, 1);
 
-            //    if (_pad.DPad.Left == ButtonState.Pressed || _key.IsKeyDown(Keys.Left) || _stickLeft.X < 0) SetNextDirection(-1, 0);
-            //    if (_pad.DPad.Right == ButtonState.Pressed || _key.IsKeyDown(Keys.Right) || _stickLeft.X > 0) SetNextDirection(1, 0);
-
-            //    // Auto Next Direction if different than current direction
-            //    if (_cells[0]._nextDirection.X != _cells[0]._direction.X || _cells[0]._nextDirection.Y != _cells[0]._direction.Y)
-            //    {
-            //        //SetDirection(_cells[0]._nextDirection.X, _cells[0]._nextDirection.Y);
-            //    }
-            //}
-
-                return base.Update(gameTime);
+            return base.Update(gameTime);
         }
         public override Node Draw(SpriteBatch batch, GameTime gameTime, int indexLayer)
         {
 
             if (indexLayer == (int)Game1.Layers.Main)
             {
-                //var rect = new RectangleF(AbsX, AbsY, ScreenPlay.CellW, ScreenPlay.CellH);
-                //batch.FillRectangle(rect.Extend(-8), Color.Yellow);
-
-                //batch.Rectangle(rect.Extend(-4), Color.Red, 1f);
-                //batch.Rectangle(rect.Extend(-2), Color.DarkRed, 1f);
-                //for (int i = 0; i < _cells.Count; i++)
-                //{
-                //    _cells[i].Draw(batch);
-                //}
-
-                for (int i = _cells.Count -1; i >= 0; i--)
+                for (int i = _bodys.Count -1; i >= 0; i--)
                 {
-                    _cells[i].Draw(batch);
+                    _bodys[i].Draw(batch);
+
+                    if (i > 0)
+                    {
+                        //batch.Line(_bodys[i].AbsXY + _arena.CellSize/2, _bodys[i-1].AbsXY + _arena.CellSize/2, Color.Yellow * .5f, 5f);
+                    }
                 }
 
-
+                _bodys[0].DrawHead(batch);
             }
 
             if (indexLayer == (int)Game1.Layers.Debug)
@@ -161,6 +166,8 @@ namespace SnakeBattle
                 //batch.Line(_from + OXY, AbsXY + OXY, Color.GreenYellow, 4f);
                 //batch.CenterStringXY(Game1._fontMain, $"{_cells[0]._nextDirection}", _cells[0]._position + OXY - Vector2.UnitY * 24, Color.White);
                 //batch.CenterStringXY(Game1._fontMain, $"{_mapPosition}", AbsXY + OXY - Vector2.UnitY * 24, Color.White);
+
+                batch.LeftTopString(Game1._fontMain, $"{_arena.GetGrid(_bodys[0]._mapPosition)._type}", Vector2.One * 20, Color.White);
 
             }
 

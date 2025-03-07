@@ -11,37 +11,121 @@ using System.Threading.Tasks;
 
 namespace SnakeBattle
 {
+    class Cell
+    {
+        public int _type = Const.NoIndex;
+        public Node _owner = null;
+    }
+
+    struct ArenaSet
+    {
+        public int _mapW;
+        public int _mapH;
+        public int _cellW;
+        public int _cellH;
+
+        public ArenaSet(int mapW, int mapH, int cellW = 32 , int cellH = 32)
+        {
+            _mapW = mapW;
+            _mapH = mapH;
+            _cellW = cellW;
+            _cellH = cellH;
+        }
+    }
+
     class Arena : Node
     {
         public Point MapSize => _mapSize;
-        static public Vector2 Cell = new Vector2(32, 32);
         Point _mapSize = new Point(20,20);
+        public Vector2 CellSize => _cellSize;
+        Vector2 _cellSize = new Vector2(32, 32);
 
-        Hero _hero;
 
-        
 
-        public Arena(int mapW, int mapH, int cellW = 32, int cellH = 32)
+        List2D<Cell> _grid = new List2D<Cell>(20,20);
+
+        public static Color[] Colors = [
+            Color.Red,
+            Color.Blue,
+            Color.Green,
+            Color.Yellow,
+            Color.Violet,
+            ];
+
+        public Arena(ArenaSet arenaSet)
         {
-            _hero = (Hero)new Hero(this).AppendTo(this);
-            _hero.SetMapPosition(2, 2);
-
-            SetMapSize(mapW, mapH, cellW, cellH);
-
-
+            SetMapSize(arenaSet);
+            InitGrid();
 
         }
-        public void SetMapSize(int mapW, int mapH, int cellW = 32, int cellH = 32)
+        public void ClearGrid(int type = Const.NoIndex, Node owner = null)
         {
-            _mapSize.X = mapW;
-            _mapSize.Y = mapH;
-
-            Cell.X = cellW;
-            Cell.Y = cellH;
-
-            _rect.Width = _mapSize.X * Cell.X;
-            _rect.Height = _mapSize.Y * Cell.Y;
+            for (int i = 0; i < _grid._width; i++)
+            {
+                for (int j = 0; j < _grid._height; j++)
+                {
+                    var cell = _grid.Get(i, j);
+                    
+                    if (cell != null)
+                    {
+                        cell._type = type;
+                        cell._owner = owner;
+                    }
+                }
+            }
         }
+        public void InitGrid()
+        {
+            for (int i = 0; i < _grid._width; i++)
+            {
+                for (int j = 0; j < _grid._height; j++)
+                {
+                    _grid.Put(i, j, new Cell());
+                }
+            }
+        }
+        public void SetMapSize(ArenaSet arenaSet)
+        {
+            _mapSize.X = arenaSet._mapW;
+            _mapSize.Y = arenaSet._mapH;
+
+            _cellSize.X = arenaSet._cellW;
+            _cellSize.Y = arenaSet._cellH;
+
+            _rect.Width = _mapSize.X * CellSize.X;
+            _rect.Height = _mapSize.Y * CellSize.Y;
+
+            _grid.ResizeVecObject2D(arenaSet._mapW, arenaSet._mapH);
+        }
+        public bool IsInArena(Point mapPosition)
+        {
+            if (mapPosition.X < 0 || mapPosition.X >= MapSize.X ||
+                mapPosition.Y < 0 || mapPosition.Y >= MapSize.Y)
+                return false;
+            else
+                return true;
+        }
+        public void SetGrid(Point mapPosition, int type, Node owner)
+        {
+            if (IsInArena(mapPosition))
+            {
+                var cell = _grid.Get(mapPosition.X, mapPosition.Y);
+                
+                if (cell != null)
+                {
+                    cell._type = type;
+                    cell._owner = owner;
+                }
+            }
+        }
+        public Cell GetGrid(Point mapPosition)
+        {
+            if (IsInArena(mapPosition))
+                return _grid.Get(mapPosition.X, mapPosition.Y);
+
+            return null;
+        }
+
 
         public override Node Update(GameTime gameTime)
         {
@@ -59,9 +143,32 @@ namespace SnakeBattle
                 //batch.GraphicsDevice.Clear(Color.DarkSlateBlue * .5f);
                 batch.FillRectangle(AbsRectF, Color.Black * .25f);
                 //batch.Grid(Vector2.Zero, Game1.ScreenW, Game1.ScreenH, Cell.X, Cell.Y, Color.Black * 1f, 3f);
-                batch.Grid(AbsXY, AbsRectF.Width, AbsRectF.Height, Cell.X, Cell.Y, Color.Black * .25f, 1f);
+                batch.Grid(AbsXY, AbsRectF.Width, AbsRectF.Height, CellSize.X, CellSize.Y, Color.Black * .25f, 1f);
 
-                batch.Rectangle(AbsRectF, Color.RoyalBlue, 3f);
+                batch.Rectangle(AbsRectF.Extend(2f), Color.RoyalBlue, 3f);
+            }
+
+            if (indexLayer == (int)Game1.Layers.Debug)
+            {
+                for (int i = 0; i < _grid._width; i++)
+                {
+                    for (int j = 0; j < _grid._height; j++)
+                    {
+
+                        var cell = _grid.Get(i, j);
+
+
+                        if (cell != null)
+                        {
+                            if (cell._type == Const.NoIndex)
+                                continue;
+
+                            Vector2 pos = Vector2.UnitX * i * CellSize.X + Vector2.UnitY * j * CellSize.Y;
+                            batch.CenterStringXY(Game1._fontMain, $"{_grid.Get(i,j)._type}", pos + AbsXY + CellSize / 2, Color.Gray * .5f);
+
+                        }
+                    }
+                }
             }
 
             DrawChilds(batch, gameTime, indexLayer);
