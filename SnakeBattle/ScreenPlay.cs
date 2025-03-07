@@ -61,6 +61,7 @@ namespace SnakeBattle
                 new Item(_arena, pos, color).AppendTo(_arena);
             }
 
+            _hero.DeleteBody();
             _hero.SetMapPosition(new Point(_arena.MapSize.X / 2, _arena.MapSize.Y / 2));
 
             return base.Init();

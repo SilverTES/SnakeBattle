@@ -92,6 +92,17 @@ namespace SnakeBattle
             body.AppendTo(_arena);
             body.SetMapPosition(mapPosition);
         }
+        public void DeleteBody()
+        {
+            for (int i = 1; i < _bodys.Count; i++)
+            {
+                if (_bodys[i] != null)
+                    _bodys[i].KillMe();
+            }
+
+            if (_bodys.Count > 1)
+                _bodys.RemoveRange(1, _bodys.Count - 1);
+        }
         public Body LastBody()
         {
             return _bodys.Last();
