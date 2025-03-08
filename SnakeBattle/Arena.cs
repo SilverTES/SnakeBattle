@@ -127,6 +127,20 @@ namespace SnakeBattle
             else
                 return true;
         }
+        public bool IsVoid(Point mapPosition)
+        {
+            if (GetGrid(mapPosition)._type != Const.NoIndex)
+                return false;
+
+            return true;
+        }
+        public bool Is<T>(Point mapPosition)
+        {
+            if (GetGrid(mapPosition)._type == UID.Get<T>())
+                return true;
+
+            return false;
+        }
         public void SetGrid(Point mapPosition, int type, Node owner)
         {
             if (IsInArena(mapPosition))

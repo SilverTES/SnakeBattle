@@ -147,14 +147,19 @@ namespace SnakeBattle
             {
                 Point direction = new Point();
 
-                if (_pad.DPad.Up == ButtonState.Pressed || _key.IsKeyDown(Keys.Z) || _key.IsKeyDown(Keys.Up) || _stickLeft.Y > 0) direction += new Point(0, -1);
-                if (_pad.DPad.Down == ButtonState.Pressed || _key.IsKeyDown(Keys.S) || _key.IsKeyDown(Keys.Down) || _stickLeft.Y < 0) direction += new Point(0, 1);
+                bool btnUp = _pad.DPad.Up == ButtonState.Pressed || _key.IsKeyDown(Keys.Z) || _key.IsKeyDown(Keys.Up) || _stickLeft.Y > 0;
+                bool btnDown = _pad.DPad.Down == ButtonState.Pressed || _key.IsKeyDown(Keys.S) || _key.IsKeyDown(Keys.Down) || _stickLeft.Y < 0;
+                bool btnLeft = _pad.DPad.Left == ButtonState.Pressed || _key.IsKeyDown(Keys.Q) || _key.IsKeyDown(Keys.Left) || _stickLeft.X < 0;
+                bool btnRight = _pad.DPad.Right == ButtonState.Pressed || _key.IsKeyDown(Keys.D) || _key.IsKeyDown(Keys.Right) || _stickLeft.X > 0;
 
-                if (_pad.DPad.Left == ButtonState.Pressed || _key.IsKeyDown(Keys.Q) || _key.IsKeyDown(Keys.Left) || _stickLeft.X < 0)  direction += new Point(-1, 0);
-                if (_pad.DPad.Right == ButtonState.Pressed || _key.IsKeyDown(Keys.D) || _key.IsKeyDown(Keys.Right) || _stickLeft.X > 0) direction += new Point(1, 0);
+                if (btnUp && !_arena.Is<Body>(_bodys[0]._mapPosition + new Point(0, -1))) direction = new Point(0, -1);
+                if (btnDown && !_arena.Is<Body>(_bodys[0]._mapPosition + new Point(0, 1))) direction = new Point(0, 1);
+
+                if (btnLeft && !_arena.Is<Body>(_bodys[0]._mapPosition + new Point(-1, 0)))  direction = new Point(-1, 0);
+                if (btnRight && !_arena.Is<Body>(_bodys[0]._mapPosition + new Point(1, 0))) direction = new Point(1, 0);
 
                 // Result of 4 directions
-                if (direction.X != 0 ^ direction.Y != 0)
+                //if (direction.X != 0 ^ direction.Y != 0)
                 {
                     SetDirection(direction);
                 }
