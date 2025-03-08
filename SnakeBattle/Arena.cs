@@ -129,6 +129,9 @@ namespace SnakeBattle
         }
         public bool IsVoid(Point mapPosition)
         {
+            if (!IsInArena(mapPosition))
+                return false;
+
             if (GetGrid(mapPosition)._type != Const.NoIndex)
                 return false;
 
@@ -136,6 +139,9 @@ namespace SnakeBattle
         }
         public bool Is<T>(Point mapPosition)
         {
+            if (!IsInArena(mapPosition))
+                return false;
+
             if (GetGrid(mapPosition)._type == UID.Get<T>())
                 return true;
 
