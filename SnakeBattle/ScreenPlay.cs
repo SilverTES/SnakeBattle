@@ -23,8 +23,9 @@ namespace SnakeBattle
 
         ArenaSet[] _arenaSets = [
             new ArenaSet(32,32,32,32),
-            new ArenaSet(20,20,50,50),
+            new ArenaSet(24,24,40,40),
             new ArenaSet(16,16,64,64),
+            new ArenaSet(12,12,80,80),
             ];
 
         public ScreenPlay(Game1 game)
@@ -34,7 +35,7 @@ namespace SnakeBattle
             SetPosition(0, 0);
             SetSize(Game1.ScreenW, Game1.ScreenH);
 
-            _arena = (Arena)new Arena(_arenaSets[1]).AppendTo(this);
+            _arena = (Arena)new Arena(_arenaSets[2]).AppendTo(this);
             _arena.SetPosition(440, 20);
 
             _loop = new Addon.Loop(this);
@@ -65,18 +66,17 @@ namespace SnakeBattle
 
             _mouse = WindowManager.GetMousePosition();
 
-
             // Debug
             if (ButtonControl.OnePress("Reset", _key.IsKeyDown(Keys.F5)))
             {
                 Init();
             }
 
-
-            if (_arena.GroupOf(UID.Get<Item>()).Count <= 0)
-                _arena.AddRandomItem(4);
-
             UpdateChilds(gameTime);
+
+            if (_arena.GroupOf(UID.Get<Item>()).Count <= 0 && !_hero._isMove)
+                _arena.AddRandomItem(8);
+
 
             return base.Update(gameTime);   
         }

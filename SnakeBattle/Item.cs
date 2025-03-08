@@ -40,6 +40,8 @@ namespace SnakeBattle
         {
             UpdateRect();
 
+            //_arena.SetGrid(_mapPosition, _type, this);
+
             return base.Update(gameTime);
         }
         public override Node Draw(SpriteBatch batch, GameTime gameTime, int indexLayer)

@@ -32,6 +32,7 @@ public class Game1 : Game
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
         Window.AllowUserResizing = true;
+        //IsFixedTimeStep = false;
     }
 
     protected override void Initialize()

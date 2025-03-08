@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Mugen.Core;
 using Mugen.GFX;
 using Mugen.Physics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,6 +21,7 @@ namespace SnakeBattle
         List<Body> _bodys = [];
 
         public Point _directionHead;
+        public bool _isMove = false;
 
         Arena _arena;
         public Hero(Arena arena, Point mapPosition, int size = 4)
@@ -54,10 +56,13 @@ namespace SnakeBattle
             if (!_arena.IsInArena(nextPosition))
                 return;
 
-
             var cell = _arena.GetGrid(nextPosition);
 
             if (cell == null)
+                return;
+            
+            // if touch body
+            if (cell._type == UID.Get<Body>())
                 return;
 
             // if touch item
@@ -78,8 +83,6 @@ namespace SnakeBattle
                 return;
             }
 
-            if (cell._type != Const.NoIndex)
-                return;
 
             _bodys[0].MoveTo(nextPosition);
 
@@ -120,8 +123,8 @@ namespace SnakeBattle
         {
             UpdateRect();
 
-
             for (int i = 0; i < _bodys.Count; i++)
+            //for (int i = _bodys.Count - 1; i >= 0 ; i--)
             {
                 _bodys[i].Update(gameTime);
                 _bodys[i]._numOrder = i;
@@ -136,6 +139,8 @@ namespace SnakeBattle
                     }
                 }
             }
+
+            
 
             _pad = GamePad.GetState(PlayerIndex.One);
             _key = Keyboard.GetState();
@@ -152,11 +157,11 @@ namespace SnakeBattle
                 bool btnLeft = _pad.DPad.Left == ButtonState.Pressed || _key.IsKeyDown(Keys.Q) || _key.IsKeyDown(Keys.Left) || _stickLeft.X < 0;
                 bool btnRight = _pad.DPad.Right == ButtonState.Pressed || _key.IsKeyDown(Keys.D) || _key.IsKeyDown(Keys.Right) || _stickLeft.X > 0;
 
-                if (btnUp && !_arena.Is<Body>(_bodys[0]._mapPosition + new Point(0, -1))) direction = new Point(0, -1);
-                if (btnDown && !_arena.Is<Body>(_bodys[0]._mapPosition + new Point(0, 1))) direction = new Point(0, 1);
+                if (btnUp && !btnDown && !btnLeft && !btnRight && !_arena.Is<Body>(_bodys[0]._mapPosition + new Point(0, -1))) direction = new Point(0, -1);
+                if (!btnUp && btnDown && !btnLeft && !btnRight && !_arena.Is<Body>(_bodys[0]._mapPosition + new Point(0, 1))) direction = new Point(0, 1);
 
-                if (btnLeft && !_arena.Is<Body>(_bodys[0]._mapPosition + new Point(-1, 0)))  direction = new Point(-1, 0);
-                if (btnRight && !_arena.Is<Body>(_bodys[0]._mapPosition + new Point(1, 0))) direction = new Point(1, 0);
+                if (!btnUp && !btnDown && btnLeft && !btnRight && !_arena.Is<Body>(_bodys[0]._mapPosition + new Point(-1, 0)))  direction = new Point(-1, 0);
+                if (!btnUp && !btnDown && !btnLeft && btnRight && !_arena.Is<Body>(_bodys[0]._mapPosition + new Point(1, 0))) direction = new Point(1, 0);
 
                 // Result of 4 directions
                 //if (direction.X != 0 ^ direction.Y != 0)
@@ -167,6 +172,13 @@ namespace SnakeBattle
                 // Continue until touch wall
                 //if (_directionHead.X != 0 || _directionHead.Y != 0) SetDirection(_directionHead);
             }
+
+            if (_bodys[0]._onGoal)
+            {
+                Console.WriteLine("onGoal");
+            }
+
+            _isMove = _bodys[0]._isMove;
 
             return base.Update(gameTime);
         }

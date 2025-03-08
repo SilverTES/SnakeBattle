@@ -45,11 +45,11 @@ namespace SnakeBattle
         List2D<Cell> _grid = new List2D<Cell>(20,20);
 
         public static Color[] Colors = [
-            Color.Red,
-            Color.Blue,
-            Color.Green,
+            Color.OrangeRed,
+            Color.LightSteelBlue,
+            Color.SpringGreen,
             Color.Yellow,
-            Color.Violet,
+            //Color.Violet,
             ];
 
         public Arena(ArenaSet arenaSet)
@@ -73,7 +73,7 @@ namespace SnakeBattle
                     if (GetGrid(pos)._type != Const.NoIndex)
                         continue;
 
-                    Color color = Colors[Misc.Rng.Next(0, Colors.Length - 1)];
+                    Color color = Colors[Misc.Rng.Next(0, Colors.Length)];
 
                     new Item(this, pos, color).AppendTo(this);
                     canSpawn = true;
@@ -184,7 +184,7 @@ namespace SnakeBattle
                 //batch.GraphicsDevice.Clear(Color.DarkSlateBlue * .5f);
                 batch.FillRectangle(AbsRectF, Color.Black * .25f);
                 //batch.Grid(Vector2.Zero, Game1.ScreenW, Game1.ScreenH, Cell.X, Cell.Y, Color.Black * 1f, 3f);
-                batch.Grid(AbsXY, AbsRectF.Width, AbsRectF.Height, CellSize.X, CellSize.Y, Color.Black * .25f, 1f);
+                batch.Grid(AbsXY, AbsRectF.Width, AbsRectF.Height, CellSize.X, CellSize.Y, Color.White * .25f, 1f);
 
                 batch.Rectangle(AbsRectF.Extend(2f), Color.RoyalBlue, 3f);
             }

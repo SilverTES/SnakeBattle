@@ -19,6 +19,7 @@ namespace SnakeBattle
         public Point _mapNextPosition;
 
         public bool _isMove = false;
+        public bool _onGoal = false;
 
         public Vector2 _from;
         public Vector2 _goal;
@@ -69,7 +70,7 @@ namespace SnakeBattle
             _mapNextPosition.X = mapPosition.X;
             _mapNextPosition.Y = mapPosition.Y;
 
-            _arena.SetGrid(_mapPosition, Const.NoIndex, null);
+            _arena.SetGrid(_mapPrevPosition, Const.NoIndex, null);
         }
 
         public override Node Update(GameTime gameTime)
@@ -78,21 +79,22 @@ namespace SnakeBattle
 
             _isACorner = false;
 
+            _onGoal = false;
+
             if (_isMove)
             {
                 _x = Easing.GetValue(Easing.Linear, _ticMove, _from.X, _goal.X, _tempoMove);
                 _y = Easing.GetValue(Easing.Linear, _ticMove, _from.Y, _goal.Y, _tempoMove);
 
-                //_x = MathHelper.LerpPrecise(_from.X, _goal.X, _ticMove);
-                //_y = MathHelper.LerpPrecise(_from.Y, _goal.Y, _ticMove);
-
-                _ticMove += 1f;
+                _ticMove ++;
                 if (_ticMove > _tempoMove)
                 {
                     _isMove = false;
+                    _onGoal = true;
 
                     _mapPosition = _mapNextPosition;
-                    _arena.SetGrid(_mapPosition, UID.Get<Hero>(), this);
+                    
+                    _arena.SetGrid(_mapPosition, UID.Get<Body>(), this);
                 }
             }
 
@@ -105,8 +107,8 @@ namespace SnakeBattle
             //batch.FillRectangle(rect.Extend(-4), _isACorner ? Color.Red : Color.Orange);
             //batch.FillRectangle(rect.Extend(-6), Color.Orange);
 
-            batch.Rectangle(rect.Extend(-8), _color, 3f);
-            batch.Rectangle(rect.Extend(-4), _color * .75f, 2f);
+            batch.Rectangle(rect.Extend(-12), _color, 3f);
+            batch.Rectangle(rect.Extend(-8), _color * .75f, 2f);
 
             //batch.CenterStringXY(Game1._fontMain, $"{_index}", _position + _arena.CellSize / 2 + _arena.XY, Color.White);
 
