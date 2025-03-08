@@ -49,9 +49,11 @@ namespace SnakeBattle
         public override Node Init()
         {
             _arena.KillAll(UID.Get<Item>());
+            _arena.KillAll(UID.Get<Enemy>());
             _arena.ClearGrid();
 
-            _arena.AddRandomItem(4);
+            _arena.AddRandomItem(16);
+            _arena.AddRandomEnemy(8);
 
             _hero.DeleteBody();
             _hero.SetMapPosition(new Point(_arena.MapSize.X / 2, _arena.MapSize.Y / 2));
@@ -75,7 +77,7 @@ namespace SnakeBattle
             UpdateChilds(gameTime);
 
             if (_arena.GroupOf(UID.Get<Item>()).Count <= 0 && !_hero._isMove)
-                _arena.AddRandomItem(8);
+                _arena.AddRandomItem(16);
 
 
             return base.Update(gameTime);   
@@ -94,6 +96,9 @@ namespace SnakeBattle
             if (indexLayer == (int)Game1.Layers.Debug)
             {
                 //batch.Sight(_mouse, Game1.ScreenW, Game1.ScreenH, Color.Gray * .8f, 1);
+
+                //_arena.DrawCell(batch, new Point(2, 2), Color.Red * .5f);
+                //_arena.DrawLine(batch, new Point(2, 2), new Point(8,8), Color.Red * .5f);
 
             }
 

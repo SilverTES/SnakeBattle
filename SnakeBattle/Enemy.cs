@@ -6,17 +6,16 @@ using Mugen.Physics;
 
 namespace SnakeBattle
 {
-    class Item : Node   
+    class Enemy : Node
     {
         Arena _arena;
 
         Point _mapPosition = new Point();
 
         public Color _color;
-
-        public Item(Arena arena, Point mapPosition, Color color)
+        public Enemy(Arena arena, Point mapPosition, Color color)
         {
-            _type = UID.Get<Item>();
+            _type = UID.Get<Enemy>();
 
             _arena = arena;
             _mapPosition.X = mapPosition.X;
@@ -40,8 +39,6 @@ namespace SnakeBattle
         {
             UpdateRect();
 
-            //_arena.SetGrid(_mapPosition, _type, this);
-
             return base.Update(gameTime);
         }
         public override Node Draw(SpriteBatch batch, GameTime gameTime, int indexLayer)
@@ -50,15 +47,14 @@ namespace SnakeBattle
             {
                 var rect = new RectangleF(AbsX, AbsY, _arena.CellSize.X, _arena.CellSize.Y);
 
-                //batch.Rectangle(rect.Extend(-6), _color, 2f);
-                //batch.Rectangle(rect.Extend(-2), Color.DarkGreen, 2f);
+                batch.Rectangle(rect.Extend(-6), _color, 2f);
+                batch.Rectangle(rect.Extend(-2), _color * .75f, 2f);
 
-                batch.Circle(AbsXY + _arena.CellSize / 2, _arena.CellSize.X / 2 - 16, 8, _color, 2f);
-                batch.Circle(AbsXY + _arena.CellSize / 2, _arena.CellSize.X / 2 - 12, 8, _color, 2f);
+                batch.Circle(AbsXY + _arena.CellSize / 2, _arena.CellSize.X / 2 - 8, 6, _color, 2f);
+                batch.Circle(AbsXY + _arena.CellSize / 2, _arena.CellSize.X / 2 - 4, 6, _color, 2f);
 
                 //batch.CenterStringXY(Game1._fontMain, $"{_index}", AbsXY + _arena.CellSize / 2, Color.White);
             }
-
             return base.Draw(batch, gameTime, indexLayer);
         }
     }

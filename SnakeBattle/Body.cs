@@ -4,7 +4,6 @@ using Mugen.Animation;
 using Mugen.Core;
 using Mugen.GFX;
 using Mugen.Physics;
-using System;
 
 namespace SnakeBattle
 {
@@ -28,6 +27,7 @@ namespace SnakeBattle
 
 
         public bool _isACorner = false;
+        public bool _isAttack = false;
 
         Arena _arena;
 
@@ -78,6 +78,16 @@ namespace SnakeBattle
             UpdateRect();
 
             _isACorner = false;
+            _isAttack = false;
+
+            var cell = _arena.GetGrid(_mapPosition + new Point(1, 0));
+
+            if (cell != null)
+                if (cell._type == Const.NoIndex)
+                {
+                    _isAttack = true;
+                }
+
 
             _onGoal = false;
 
@@ -103,8 +113,13 @@ namespace SnakeBattle
 
         public void Draw(SpriteBatch batch)
         {
+            //if (_isAttack)
+            //    _arena.DrawLine(batch, _mapPosition,  new Point(_arena.MapSize.X, _mapPosition.Y), _color * .25f);
+
+
             var rect = new RectangleF(AbsX, AbsY, _arena.CellSize.X, _arena.CellSize.Y);
             //batch.FillRectangle(rect.Extend(-4), _isACorner ? Color.Red : Color.Orange);
+            //batch.FillRectangle(rect.Extend(-4), _isAttack ? _color : Color.Transparent);
             //batch.FillRectangle(rect.Extend(-6), Color.Orange);
 
             batch.Rectangle(rect.Extend(-12), _color, 3f);
@@ -116,19 +131,20 @@ namespace SnakeBattle
             //batch.FillRectangle(rect.Extend(-8), Color.IndianRed * .5f);
         }
 
-        public void DrawHead(SpriteBatch batch)
+        public void DrawHead(SpriteBatch batch, Color color)
         {
             var rect = new RectangleF(AbsX, AbsY, _arena.CellSize.X, _arena.CellSize.Y);
             //batch.FillRectangle(rect.Extend(-4), _isACorner ? Color.Red : Color.Orange);
-            batch.FillRectangle(rect.Extend(-10), Color.Orange);
+            batch.FillRectangle(rect.Extend(-10), color);
 
-            batch.Rectangle(rect.Extend(-8), Color.Yellow, 2f);
-            batch.Rectangle(rect.Extend(-4), Color.LightGoldenrodYellow, 2f);
+            batch.Rectangle(rect.Extend(-8), color * .75f, 2f);
+            batch.Rectangle(rect.Extend(-4), color * .5f, 2f);
 
             //batch.CenterStringXY(Game1._fontMain, $"{_index}", _position + _arena.CellSize / 2 + _arena.XY, Color.White);
 
             //rect = new RectangleF(_mapPrevPosition.X * ScreenPlay.CellW, _mapPrevPosition.Y * ScreenPlay.CellH, ScreenPlay.CellW, ScreenPlay.CellH);
             //batch.FillRectangle(rect.Extend(-8), Color.IndianRed * .5f);
         }
+
     }
 }

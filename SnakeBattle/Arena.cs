@@ -2,11 +2,10 @@
 using Microsoft.Xna.Framework.Graphics;
 using Mugen.Core;
 using Mugen.GFX;
+using Mugen.Physics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace SnakeBattle
@@ -46,7 +45,7 @@ namespace SnakeBattle
 
         public static Color[] Colors = [
             Color.OrangeRed,
-            Color.LightSteelBlue,
+            Color.RoyalBlue,
             Color.SpringGreen,
             Color.Yellow,
             //Color.Violet,
@@ -76,6 +75,29 @@ namespace SnakeBattle
                     Color color = Colors[Misc.Rng.Next(0, Colors.Length)];
 
                     new Item(this, pos, color).AppendTo(this);
+                    canSpawn = true;
+                }
+            }
+        }
+        public void AddRandomEnemy(int nbEnemy)
+        {
+            for (int i = 0; i < nbEnemy; i++)
+            {
+                bool canSpawn = false;
+                while (!canSpawn)
+                {
+                    //int x = MapSize.X - 1;
+                    int x = Misc.Rng.Next(0, MapSize.X);
+                    int y = Misc.Rng.Next(0, MapSize.Y);
+
+                    Point pos = new Point(x, y);
+
+                    if (GetGrid(pos)._type != Const.NoIndex)
+                        continue;
+
+                    Color color = Colors[Misc.Rng.Next(0, Colors.Length)];
+
+                    new Enemy(this, pos, color).AppendTo(this);
                     canSpawn = true;
                 }
             }
@@ -216,5 +238,52 @@ namespace SnakeBattle
 
             return base.Draw(batch, gameTime, indexLayer);
         }
+        public void DrawCell(SpriteBatch batch, Point mapPosition, Color color)
+        {
+            if (!IsInArena(mapPosition))
+                return;
+
+            var rect = new RectangleF(AbsX + mapPosition.X * CellSize.X, AbsY + mapPosition.Y * CellSize.Y, CellSize.X, CellSize.Y);
+            batch.FillRectangle(rect.Extend(0), color);
+        }
+        public void DrawLine(SpriteBatch batch, Point A, Point B, Color color)
+        {
+            //function line(p0, p1)
+            //{
+            //    let points = [];
+            //    let N = diagonal_distance(p0, p1);
+            //    for (let step = 0; step <= N; step++)
+            //    {
+            //        let t = N === 0 ? 0.0 : step / N;
+            //        points.push(round_point(lerp_point(p0, p1, t)));
+            //    }
+            //    return points;
+            //}
+
+            List<Point> points = [];
+
+            float distance = (float)Geo.GetDistance(A.ToVector2(), B.ToVector2());
+
+            for (int step = 0; step <= distance; step++)
+            {
+                float t = distance == 0 ? 0.0f : step / distance;
+                
+                int x = (int)MathF.Round(MathHelper.Lerp(A.X, B.X, t));
+                int y = (int)MathF.Round(MathHelper.Lerp(A.Y, B.Y, t));
+
+                points.Add(new Point(x, y));
+            }
+
+
+            Point prevPoint = new Point(-1,-1);
+            for (int i = 0; i < points.Count; i++)
+            {
+                if (prevPoint != points[i])
+                    DrawCell(batch, points[i], color);
+
+                prevPoint = points[i];
+            }
+        }
     }
+
 }
