@@ -25,6 +25,8 @@ namespace SnakeBattle
         public Point _directionHead;
         public bool _isMove = false;
 
+        public bool _onChainLose = false;
+
         Arena _arena;
         public Hero(Arena arena, Point mapPosition, int size = 4)
         {
@@ -81,10 +83,12 @@ namespace SnakeBattle
                     AddBody(new Body(_arena, item._color), LastBody()._mapPosition);
                     new FxExplose(_arena.AbsXY + nextPosition.ToVector2() * _arena.CellSize + _arena.CellSize/2, item._color, 16, 40).AppendTo(_parent);
 
+                    // Chain Lose !
                     if (_currentColor != item._color)
                     {
                         _currentColor = item._color;
                         DeleteBody();
+                        _onChainLose = true;
                     }
 
                     cell._owner.KillMe();
@@ -93,7 +97,6 @@ namespace SnakeBattle
                 }
                 //return;
             }
-
 
             _body[0].MoveTo(nextPosition);
 
@@ -129,6 +132,10 @@ namespace SnakeBattle
         {
             return _body.Last();
         }
+        public int NbBody()
+        {
+            return _body.Count;
+        }
         public override Node Init()
         {
             return base.Init();
@@ -136,6 +143,8 @@ namespace SnakeBattle
         public override Node Update(GameTime gameTime)
         {
             UpdateRect();
+
+            _onChainLose = false;
 
             if (_body[0]._onGoal)
             {
@@ -203,7 +212,8 @@ namespace SnakeBattle
             _isMove = _body[0]._isMove;
 
 
-
+            if (_onChainLose)
+                Console.WriteLine("ChainLose");
 
 
             return base.Update(gameTime);

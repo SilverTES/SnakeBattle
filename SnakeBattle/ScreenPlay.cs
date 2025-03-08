@@ -28,6 +28,10 @@ namespace SnakeBattle
             new ArenaSet(12,12,80,80),
             ];
 
+        int _playerLife = 100;
+        int _enemyLife = 80;
+
+
         public ScreenPlay(Game1 game)
         {
             _game = game;
@@ -79,6 +83,11 @@ namespace SnakeBattle
             if (_arena.GroupOf(UID.Get<Item>()).Count <= 0 && !_hero._isMove)
                 _arena.AddRandomItem(16);
 
+            if (_hero._onChainLose)
+            {
+                _enemyLife -= _hero.NbBody();
+            }
+
 
             return base.Update(gameTime);   
         }
@@ -99,6 +108,9 @@ namespace SnakeBattle
 
                 //_arena.DrawCell(batch, new Point(2, 2), Color.Red * .5f);
                 //_arena.DrawLine(batch, new Point(2, 2), new Point(8,8), Color.Red * .5f);
+
+                batch.CenterStringXY(Game1._fontMain, $"Player {_playerLife}", new Vector2(80, Game1.ScreenH/2), Color.Yellow);
+                batch.CenterStringXY(Game1._fontMain, $"Enemy {_enemyLife}", new Vector2(Game1.ScreenW - 80, Game1.ScreenH/2), Color.Yellow);
 
             }
 
