@@ -41,7 +41,8 @@ namespace SnakeBattle
 
 
 
-        List2D<Cell> _grid = new List2D<Cell>(20,20);
+        //List2D<Cell> _grid = new List2D<Cell>(20,20);
+        Grid2D<Cell> _grid = new Grid2D<Cell>(20,20);
 
         public static Color[] Colors = [
             Color.OrangeRed,
@@ -104,9 +105,9 @@ namespace SnakeBattle
         }
         public void ClearGrid(int type = Const.NoIndex, Node owner = null)
         {
-            for (int i = 0; i < _grid._width; i++)
+            for (int i = 0; i < _grid.Width; i++)
             {
-                for (int j = 0; j < _grid._height; j++)
+                for (int j = 0; j < _grid.Height; j++)
                 {
                     var cell = _grid.Get(i, j);
                     
@@ -120,11 +121,11 @@ namespace SnakeBattle
         }
         public void InitGrid()
         {
-            for (int i = 0; i < _grid._width; i++)
+            for (int i = 0; i < _grid.Width; i++)
             {
-                for (int j = 0; j < _grid._height; j++)
+                for (int j = 0; j < _grid.Height; j++)
                 {
-                    _grid.Put(i, j, new Cell());
+                    _grid.Set(i, j, new Cell());
                 }
             }
         }
@@ -139,7 +140,7 @@ namespace SnakeBattle
             _rect.Width = _mapSize.X * CellSize.X;
             _rect.Height = _mapSize.Y * CellSize.Y;
 
-            _grid.ResizeVecObject2D(arenaSet._mapW, arenaSet._mapH);
+            _grid.Resize(arenaSet._mapW, arenaSet._mapH);
         }
         public bool IsInArena(Point mapPosition)
         {
@@ -213,9 +214,9 @@ namespace SnakeBattle
 
             if (indexLayer == (int)Game1.Layers.Debug)
             {
-                for (int i = 0; i < _grid._width; i++)
+                for (int i = 0; i < _grid.Width; i++)
                 {
-                    for (int j = 0; j < _grid._height; j++)
+                    for (int j = 0; j < _grid.Height; j++)
                     {
 
                         var cell = _grid.Get(i, j);

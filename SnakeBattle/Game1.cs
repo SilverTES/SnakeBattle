@@ -39,8 +39,8 @@ public class Game1 : Game
     {
 
         _screenPlay = new ScreenPlay(this);
-        ScreenManager.Init(_screenPlay, Enums.Count<Layers>());
-        ScreenManager.SetLayersOrder([(int)Layers.Main, (int)Layers.FX, (int)Layers.HUD, (int)Layers.Debug]);
+        ScreenManager.Init(_screenPlay, Enums.Count<Layers>(), [(int)Layers.Main, (int)Layers.FX, (int)Layers.HUD, (int)Layers.Debug]);
+        //ScreenManager.SetLayersOrder([(int)Layers.Main, (int)Layers.FX, (int)Layers.HUD, (int)Layers.Debug]);
 
         base.Initialize();
     }
